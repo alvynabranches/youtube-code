@@ -47,8 +47,10 @@ MAX_ITERATIONS = 1000
 #     for element in driver.find_elements_by_id('items'):
 #         soup = BeautifulSoup(element.get_attribute('innerHTML'), 'html.parser')
 #         for link in soup.find_all('a', href=True):
-#             yt_url = 'https://www.youtube.com'
-#             df = df.append({'links': yt_url + str(link['href'])}, ignore_index=True).drop_duplicates()
+#             url = 'https://www.youtube.com' + str(link['href'])
+#             if 'watch' in str(link['href']):
+#                 df = df.append({'links': url}, ignore_index=True).drop_duplicates() 
+
 # except Exception as e:
 #     print(e)
 # finally:
@@ -70,12 +72,21 @@ def download_ytvids(video_link_list:list, start:int=1, end:int=1, batch_size:int
     all_batches = []
     start -= 1
     end = len(df['links']) if end == -1 else end
-    for i in range(start, end, batch_size):
+    for i in range(start, end+1, batch_size):
         # if video_link_list[i*batch_size:(i+1)*batch_size] != []:
         try:
-            download_ytvid(video_link_list[i*batch_size : (i+1)*batch_size if (i+1)*batch_size else len(video_link_list)])
+            print(video_link_list[i*batch_size : (i+1)*batch_size])
         except:
-            print(i*batch_size, (i+1)*batch_size if (i+1)*batch_size else len(video_link_list))
+            print(i*batch_size, (i+1)*batch_size)
+            if os.path.isfile('not_completed.xlsx'):
+                df = pd.read_excel('not_completed.xlsx')
+                print('File Exists')
+                df.append({'not_completed': video_link_list[i*batch_size : (i+1)*batch_size]}, ignore_index=True)
+                df.to_excel('not_completed.xlsx')
+            else:
+                df = pd.DataFrame(columns=['not_completed'])
+                df.append({'not_completed': video_link_list[i*batch_size : (i+1)*batch_size]}, ignore_index=True)
+                df.to_excel('not_completed.xlsx')
 e = perf_counter()
 print(f'Time taken for load the file: {e-s:4.3f} seconds')
 
