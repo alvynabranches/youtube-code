@@ -3,6 +3,7 @@ try:
 except:
     import sys, subprocess
     subprocess.call(f'{sys.executable} -m pip install --upgrade --user selenium beautifulsoup4 youtube_dl')
+    sys.exit()
 
 from selenium.webdriver import Chrome, ChromeOptions
 from selenium.webdriver.common.keys import Keys
@@ -25,40 +26,40 @@ MAX_ITERATIONS = 1000
 # BATCH_SIZE = int(input('Enter the batch size: '))
 # MAX_ITERATIONS = int(input('Enter the max iterations: '))
 
-# s = perf_counter()
-# opts = ChromeOptions()
-# opts.headless = False
-# if os.path.isfile('links.xlsx'):
-#     df = pd.read_excel('links.xlsx')
-#     print('File Exists')
-# else:
-#     df = pd.DataFrame(columns=['links'])
+s = perf_counter()
+opts = ChromeOptions()
+opts.headless = False
+if os.path.isfile('links.xlsx'):
+    df = pd.read_excel('links.xlsx')
+    print('File Exists')
+else:
+    df = pd.DataFrame(columns=['links'])
 
-# driver = Chrome(executable_path='chromedriver.exe', options=opts)
-# driver.maximize_window()
-# driver.get()
-# driver.implicitly_wait(30)
+driver = Chrome(executable_path='chromedriver.exe', options=opts)
+driver.maximize_window()
+driver.get()
+driver.implicitly_wait(30)
 
-# for _ in range(MAX_ITERATIONS):
-#     driver.find_element_by_tag_name('body').send_keys(Keys.END)
-#     driver.implicitly_wait(100)
+for _ in range(MAX_ITERATIONS):
+    driver.find_element_by_tag_name('body').send_keys(Keys.END)
+    driver.implicitly_wait(100)
 
-# try:
-#     for element in driver.find_elements_by_id('items'):
-#         soup = BeautifulSoup(element.get_attribute('innerHTML'), 'html.parser')
-#         for link in soup.find_all('a', href=True):
-#             url = 'https://www.youtube.com' + str(link['href'])
-#             if 'watch' in str(link['href']):
-#                 df = df.append({'links': url}, ignore_index=True).drop_duplicates() 
+try:
+    for element in driver.find_elements_by_id('items'):
+        soup = BeautifulSoup(element.get_attribute('innerHTML'), 'html.parser')
+        for link in soup.find_all('a', href=True):
+            url = 'https://www.youtube.com' + str(link['href'])
+            if 'watch' in str(link['href']):
+                df = df.append({'links': url}, ignore_index=True).drop_duplicates() 
 
-# except Exception as e:
-#     print(e)
-# finally:
-#     driver.close()
-#     df.to_excel('links.xlsx', index=False)
+except Exception as e:
+    print(e)
+finally:
+    driver.close()
+    df.to_excel('links.xlsx', index=False)
 
-# e = perf_counter()
-# print(f'Time taken for extracting the links: {e-s:4.3f} seconds')
+e = perf_counter()
+print(f'Time taken for extracting the links: {e-s:4.3f} seconds')
 
 # Downloading Part
 
