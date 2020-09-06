@@ -50,8 +50,7 @@ try:
         for link in soup.find_all('a', href=True):
             url = 'https://www.youtube.com' + str(link['href'])
             if 'watch' in str(link['href']):
-                df = df.append({'links': url}, ignore_index=True).drop_duplicates() 
-
+                df = df.append({'links': url}, ignore_index=True).drop_duplicates()
 except Exception as e:
     print(e)
 finally:
