@@ -1,9 +1,9 @@
 try:
     import selenium as _, pandas as _, youtube_dl as _
 except:
-    import sys, subprocess
+    import sys, subprocess, os
     subprocess.call(f'{sys.executable} -m pip install --upgrade --user selenium beautifulsoup4 youtube_dl')
-    sys.exit()
+    os.system(f'{sys.executable} {__file__}')
 
 from selenium.webdriver import Chrome, ChromeOptions
 from selenium.webdriver.common.keys import Keys
@@ -25,7 +25,7 @@ MAX_ITERATIONS = 1000
 # END = int(input('Enter the ending value: '))
 # BATCH_SIZE = int(input('Enter the batch size: '))
 # MAX_ITERATIONS = int(input('Enter the max iterations: '))
-
+t = 0
 s = perf_counter()
 opts = ChromeOptions()
 opts.headless = False
@@ -58,12 +58,15 @@ finally:
     df.to_excel('links.xlsx', index=False)
 
 e = perf_counter()
+t += (e - s)
 print(f'Time taken for extracting the links: {e-s:4.3f} seconds')
 
 # Downloading Part
 
 s = perf_counter()
+
 df = pd.read_excel('links.xlsx')
+
 def download_ytvid(vid_url:list):
     with YoutubeDL({}) as ydl:
         ydl.download(vid_url)
@@ -71,7 +74,7 @@ def download_ytvid(vid_url:list):
 def download_ytvids(video_link_list:list, start:int=1, end:int=1, batch_size:int=1, custom_link=None):
     all_batches = []
     start -= 1
-    end = len(df['links']) if end == -1 else end
+    end = df.shape[0] if end == -1 else end
     for i in range(start, end+1, batch_size):
         # if video_link_list[i*batch_size:(i+1)*batch_size] != []:
         try:
@@ -88,9 +91,12 @@ def download_ytvids(video_link_list:list, start:int=1, end:int=1, batch_size:int
                 df.append({'not_completed': video_link_list[i*batch_size : (i+1)*batch_size]}, ignore_index=True)
                 df.to_excel('not_completed.xlsx')
 e = perf_counter()
+t += (e - s)
 print(f'Time taken for load the file: {e-s:4.3f} seconds')
 
 s = perf_counter()
 download_ytvids(df['links'].values, start=START, end=END, batch_size=1)
 e = perf_counter()
+t += (e - s)
 print(f'Time taken for downloading the videos: {e-s:4.3f} seconds')
+print(f'Total Time taken for downloading the videos: {t:4.3f} seconds')
