@@ -57,8 +57,8 @@ s = perf_counter()
 #     driver.close()
 #     df.to_excel('links.xlsx', index=False)
 
-# e = perf_counter()
-# t += (e - s)
+e = perf_counter()
+t += (e - s)
 print(f'Time taken for extracting the links: {e-s:4.3f} seconds')
 
 # Downloading Part
