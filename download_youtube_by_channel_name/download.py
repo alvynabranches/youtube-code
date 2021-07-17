@@ -29,11 +29,11 @@ t = 0
 s = perf_counter()
 # opts = ChromeOptions()
 # opts.headless = False
-if os.path.isfile('links.xlsx'):
-    df = pd.read_excel('links.xlsx')
-    print('File Exists')
-else:
-    df = pd.DataFrame(columns=['links'])
+# if os.path.isfile('links.xlsx'):
+#     df = pd.read_excel('links.xlsx')
+#     print('File Exists')
+# else:
+#     df = pd.DataFrame(columns=['links'])
 
 # driver = Chrome(executable_path='chromedriver.exe', options=opts)
 # driver.maximize_window()
@@ -64,7 +64,6 @@ print(f'Time taken for extracting the links: {e-s:4.3f} seconds')
 # Downloading Part
 
 s = perf_counter()
-
 df = pd.read_excel('links.xlsx')
 
 def download_ytvid(vid_url:list):
@@ -74,11 +73,13 @@ def download_ytvid(vid_url:list):
 def download_ytvids(video_link_list:list, start:int=1, end:int=1, batch_size:int=1, custom_link=None):
     all_batches = []
     start -= 1
+    df = pd.read_excel('links.xlsx')
     end = df.shape[0] if end == -1 else end
     for i in range(start, end+1, batch_size):
         # if video_link_list[i*batch_size:(i+1)*batch_size] != []:
         try:
             print(video_link_list[i*batch_size : (i+1)*batch_size])
+            download_ytvid(video_link_list[i*batch_size : (i+1)*batch_size])
         except:
             print(i*batch_size, (i+1)*batch_size)
             if os.path.isfile('not_completed.xlsx'):
