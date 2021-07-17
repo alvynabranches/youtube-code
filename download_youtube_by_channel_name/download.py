@@ -29,11 +29,11 @@ t = 0
 s = perf_counter()
 # opts = ChromeOptions()
 # opts.headless = False
-# if os.path.isfile('links.xlsx'):
-#     df = pd.read_excel('links.xlsx')
-#     print('File Exists')
-# else:
-#     df = pd.DataFrame(columns=['links'])
+if os.path.isfile('links.xlsx'):
+    df = pd.read_excel('links.xlsx')
+    print('File Exists')
+else:
+    df = pd.DataFrame(columns=['links'])
 
 # driver = Chrome(executable_path='chromedriver.exe', options=opts)
 # driver.maximize_window()
